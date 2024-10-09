@@ -48,7 +48,10 @@ public class Menu {
                     String NomeCurso = scanner.next();
                     System.out.println("Digite a carga horária do curso");
                     int CargaHoraria = scanner.nextInt();
-                    Curso curso = new Curso(IdCurso, NomeCurso, CargaHoraria); // invocar o construtor curso
+                    System.out.println("Digite o id do professor responsável por este curso: ");
+                    int IdCursoProfessor = scanner.nextInt();
+                    Curso curso = new Curso(IdCurso, NomeCurso, CargaHoraria, IdCursoProfessor);
+                    // invocar o construtor curso
                     cursos.add(curso);
                     break;
                 case 3:
@@ -60,29 +63,85 @@ public class Menu {
                     String DataNascimento = scanner.next();
                     System.out.println("Digite o cpf do aluno");
                     String cpf = scanner.next();
-                    Aluno aluno = new Aluno(IdAluno, NomeAluno, DataNascimento, cpf); // invocar o construtor aluno
+                    System.out.println("Digite o id do curso em que o aluno está matriculado");
+                    int IdAlunoCurso = scanner.nextInt();
+                    Aluno aluno = new Aluno(IdAluno, NomeAluno, DataNascimento, cpf, IdAlunoCurso); // invocar o
+                                                                                                    // construtor aluno
                     alunos.add(aluno);
                     break;
                 case 4:
                     System.out.println("Listagem dos professores");
-                    for (Professor professorPrint : professores) {
-                        System.out.println(professorPrint.NomeProfessor);
+                    for (Curso cursoPrint : cursos) {
+                        {
+                            int countAlunos = contaAlunosPorCurso(cursoPrint.IdCurso, alunos);
+                            for (Professor professorPrint : professores) {
+                                if (cursoPrint.IdCursoProfessor == professorPrint.IdProfessor)
+                                    System.out.println("Nome: " + professorPrint.NomeProfessor + " | Departamento: "
+                                            + professorPrint.Departamento + " | Curso: " + cursoPrint.NomeCurso
+                                            + " | Quantidade de alunos: " + countAlunos);
+                            }
+                        }
                     }
                     break;
                 case 5:
                     System.out.println("Listagem dos cursos");
                     for (Curso cursoPrint : cursos) {
-                        System.out.println("Curso: " + cursoPrint.NomeCurso + "Carga Horária: "
-                                + cursoPrint.CargaHoraria);
+                        Professor professorDoCurso = buscaProfessorPorId(professores, cursoPrint.IdCursoProfessor);
+                        if (professorDoCurso != null) {
+                            System.out.println("Curso: " + cursoPrint.NomeCurso +
+                                    " | Carga Horária: " + cursoPrint.CargaHoraria +
+                                    " | Professor: " + professorDoCurso.NomeProfessor);
+                        } else {
+                            System.out.println("Curso: " + cursoPrint.NomeCurso +
+                                    " | Carga Horária: " + cursoPrint.CargaHoraria +
+                                    " | Professor: Não encontrado");
+                        }
                     }
                     break;
+
                 case 6:
                     System.out.println("Listagem dos alunos");
-                    for (Aluno AlunoPrint : alunos) {
-                        System.out.println(AlunoPrint.NomeAluno);
+                    for (Aluno alunoPrint : alunos) {
+                        Curso cursoDoAluno = buscaCursoPorId(cursos, alunoPrint.IdAlunoCurso);
+                        if (cursoDoAluno != null) {
+                            System.out.println("Aluno: " + alunoPrint.NomeAluno +
+                                    " | Curso: " + cursoDoAluno.NomeCurso + " | Data de nascimento: "
+                                    + alunoPrint.DataNascimento + " | CPF: " + alunoPrint.cpf);
+                        } else {
+                            System.out.println("Aluno: " + alunoPrint.NomeAluno +
+                                    " | Curso: Não encontrado");
+                        }
                     }
                     break;
             }
         } while (option != 7);
+    }
+
+    static Curso buscaCursoPorId(ArrayList<Curso> cursos, int idCurso) {
+        for (Curso curso : cursos) {
+            if (curso.IdCurso == idCurso) {
+                return curso;
+            }
+        }
+        return null;
+    }
+
+    static Professor buscaProfessorPorId(ArrayList<Professor> professores, int idProfessor) {
+        for (Professor professorPrint : professores) {
+            if (professorPrint.IdProfessor == idProfessor) {
+                return professorPrint;
+            }
+        }
+        return null;
+    }
+
+    static int contaAlunosPorCurso(int idCurso, ArrayList<Aluno> alunos) {
+        int count = 0;
+        for (Aluno alunoPrint : alunos) {
+            if (alunoPrint.IdAlunoCurso == idCurso) {
+                count++;
+            }
+        }
+        return count;
     }
 }

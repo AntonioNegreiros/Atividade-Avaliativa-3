@@ -1,7 +1,10 @@
+import java.util.ArrayList;
+
 public class Professor {
     int IdProfessor;
     String NomeProfessor;
     String Departamento;
+
 
 public Professor(
     int IdProfessor,
@@ -12,4 +15,5 @@ public Professor(
     this.NomeProfessor = NomeProfessor;
     this.Departamento = Departamento;
 }
+
 }
